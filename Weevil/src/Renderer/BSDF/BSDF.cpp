@@ -70,25 +70,25 @@ BSDFSample Renderer::SampleDiffuse(const Ray& ray,const HitPayload& payload, con
 BSDFSample Renderer::SampleGGX(const Ray& ray, const HitPayload& payload, float roughness, const glm::vec3& F0)
 {
     BSDFSample sample;
-    BRDF::GGXSample ggxSample;
 	glm::vec3 N = payload.WorldNormal;
     glm::vec3 V = -ray.Direction;
 	glm::vec2 Xi = glm::vec2(Walnut::Random::Float(), Walnut::Random::Float());
-    switch (m_Settings.GGXSamplingMode)
-    {
-    case GGXSampler::NDF:
-		ggxSample = BRDF::ImportanceSampleGGX(Xi, N, V, roughness);
-        break;
-	case GGXSampler::VNDF:
-        ggxSample = BRDF::ImportanceSampleGGXVNDF(Xi, N, V, roughness);
-		break;
-    }
+    BRDF::GGXSample ggxSample =
+        BRDF::ImportanceSampleGGX(
+            Xi,
+            N,
+            V,
+            roughness);
     glm::vec3 H = ggxSample.HalfVector;
 	glm::vec3 L = glm::normalize(glm::reflect(-V, H));
     if (glm::dot(N, L) <= 0.0f)
     {
-        L = glm::normalize(glm::reflect(ray.Direction, N));
-        H = glm::normalize(V + L);
+        sample.Direction = L;
+        sample.HalfVector = H;
+        sample.PDF = 0.0f;
+        sample.Weight = glm::vec3(0.0f);
+        sample.IsDelta = false;
+        return sample;
     }
 	BRDF::GGXEvaluation eval = BRDF::EvaluateGGX(N, V, L, H, roughness, F0);
 	float NdotL = glm::max(glm::dot(N, L), 0.0f);

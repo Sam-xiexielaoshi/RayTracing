@@ -33,11 +33,7 @@ public:
 		ACES,  
 		Hable
 	};
-	enum class GGXSampler
-	{
-		NDF = 0,
-		VNDF
-	};
+
 	struct Settings
 	{
 		bool Accumulate = true;
@@ -53,7 +49,6 @@ public:
 		float Gamma = 2.2f;
 		bool EnableRussianRoulette = true;
 		int MaxBounces = 5;
-		GGXSampler GGXSamplingMode = GGXSampler::NDF;
 	};
 public:
 	Renderer();

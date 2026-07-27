@@ -52,15 +52,12 @@ namespace BRDF
 		sample.HalfVector = glm::normalize(sampleVec);
         return sample;
     }
-    GGXSample ImportanceSampleGGXVNDF(const glm::vec2& Xi, const glm::vec3& N, const glm::vec3& V, float roughness)
-    {
-        return ImportanceSampleGGX(Xi, N, V, roughness);
-    }
+
     glm::vec3 EvaluateCookTorrance(const glm::vec3& N, const glm::vec3& V, const glm::vec3& L, const glm::vec3& H, float roughness, const glm::vec3& F0)
     {
         float D = DistributionGGX(N, H, roughness);
         float G = GeometrySmith(N, V, L, roughness);
-        glm::vec3 F = FresnelSchlick(glm::max(glm::dot(H, V), 0.0f), F0);
+        glm::vec3 F = FresnelSchlick(glm::dot(H, V), F0);
         float NdotV = glm::max(glm::dot(N, V), 0.0f);
         float NdotL = glm::max(glm::dot(N, L), 0.0f);
         float denominator = 4.0f * NdotV * NdotL + 0.000001f;
